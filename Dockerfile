@@ -13,10 +13,11 @@ COPY . /src
 RUN make clean && make
 
 FROM alpine:latest
-LABEL org.opencontainers.image.source="https://github.com/heiher/hev-socks5-tunnel"
+LABEL org.opencontainers.image.source="https://github.com/testmana2/hev-socks5-tunnel"
 
 RUN apk add --update --no-cache \
-    iproute2
+    iproute2 \
+    dnsmasq
 
 ENV TUN=tun0 \
     MTU=8500 \
@@ -34,6 +35,13 @@ ENV TUN=tun0 \
     CONFIG_ROUTES=1 \
     IPV4_INCLUDED_ROUTES=0.0.0.0/0 \
     IPV4_EXCLUDED_ROUTES='' \
+    LAN_DNS=192.168.1.1 \
+    MAPDNS_ADDRESS=192.0.2.2 \
+    MAPDNS_PORT=53 \
+    MAPDNS_NETWORK=100.64.0.0 \
+    MAPDNS_NETMASK=255.192.0.0 \
+    MAPDNS_CACHE_SIZE=10000 \
+    DNS_LISTEN_ADDRESS=0.0.0.0 \
     LOG_LEVEL=warn
 
 HEALTHCHECK --start-period=5s --interval=5s --timeout=2s --retries=3 CMD ["test", "-f", "/success"]
